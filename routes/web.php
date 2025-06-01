@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\AppointmentController;
@@ -29,6 +31,19 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::middleware(['auth', 'user.type:patient'])->group(function () {
+    Route::get('/dashboard/patient', [App\Http\Controllers\HomeController::class, 'patientDashboard']);
+    Route::resource('appointments', AppointmentController::class);
+});
+
+Route::middleware(['auth', 'user.type:doctor'])->group(function () {
+    Route::get('/dashboard/doctor', [DoctorController::class, 'dashboard']);
+    Route::resource('medical-records', MedicalRecordController::class);
+});
+
+Route::middleware(['auth', 'user.type:admin'])->group(function () {
+    //Route::get('/dashboard/admin', [AdminController::class, 'dashboard']);
+    Route::resource('users', UserController::class);
+    Route::resource('doctors', DoctorController::class);
+});
