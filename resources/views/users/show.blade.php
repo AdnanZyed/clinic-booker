@@ -10,7 +10,7 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">{{ __('User Details') }}</h3>
-        <a href="{{ route('users.index') }}" class="btn btn-sm btn-secondary text-end">{{ __('Back to list') }}</a>
+        <a href="{{ route('users.index') }}" class="btn btn-sm btn-secondary float-right">{{ __('Back to list') }}</a>
     </div>
     <div class="card-body">
         <table class="table table-bordered">
