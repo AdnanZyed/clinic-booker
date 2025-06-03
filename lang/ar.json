@@ -83,7 +83,7 @@
     "This is a secure area of the application. Please confirm your password before continuing.": "هذه منطقة آمنة للتطبيق. يرجى تأكيد كلمة المرور الخاصة بك قبل المتابعة.",
     "This password reset link will expire in :count minutes.": "ستنتهي صلاحية رابط استعادة كلمة المرور خلال :count دقيقة.",
     "to": "إلى",
-    "Toggle navigation": "إظهار/إخفاء القائمة",
+    "Toggle navigation": "إظهار\/إخفاء القائمة",
     "Too Many Requests": "طلبات كثيرة جدًا",
     "Unauthorized": "غير مصرّح",
     "Update Password": "تحديث كلمة المرور",
@@ -94,5 +94,16 @@
     "You are logged in!": "لقد قمت بتسجيل الدخول!",
     "You are receiving this email because we received a password reset request for your account.": "لقد استلمت هذا الإيميل لأننا استقبلنا طلباً لاستعادة كلمة مرور حسابك.",
     "You're logged in!": "لقد قمت بتسجيل الدخول!",
-    "Your email address is unverified.": "لم يتم التحقق من عنوان بريدك الإلكتروني."
+    "Your email address is unverified.": "لم يتم التحقق من عنوان بريدك الإلكتروني.",
+    "Update Profile Information": "تحديث المعلومات الشخصية",
+    "Ensure your account information is up to date.": "تأكد من أن معلومات حسابك محدثة.",
+    "Ensure your account uses a long, random password to stay secure.": "تأكد من أن حسابك يستخدم كلمة مرور قوية وعشوائية لضمان الأمان.",
+    "Once your account is deleted, all of its resources and data will be permanently deleted.": "بمجرد حذف حسابك، سيتم حذف جميع البيانات بشكل دائم.",
+    "Delete": "حذف",
+    "Updated successfuly": "تم التحديث بنجاح",
+    "Add new user": "اضافة مستخدم جديد",
+    "Admin": "مشرف",
+    "All Users": "جميع المستخدمين",
+    "Add New User": "اضافة مستخدم جديد",
+    "Agree": "موافق"
 }

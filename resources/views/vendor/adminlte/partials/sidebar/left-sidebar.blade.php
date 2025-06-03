@@ -26,7 +26,7 @@
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>لوحة التحكم</p>
+                        <p>{{__('Dashboard')}}</p>
                     </a>
                 </li>
 
@@ -34,43 +34,36 @@
                     <li class="nav-item">
                         <a href="{{ route('users.index') }}" class="nav-link">
                             <i class="nav-icon fas fa-users"></i>
-                            <p>إدارة المستخدمين</p>
+                            <p>{{__('Manage Users')}}</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('appointments.index') }}" class="nav-link">
                             <i class="nav-icon fas fa-calendar-check"></i>
-                            <p>إدارة المواعيد</p>
+                            <p>{{__('Manage Appointments')}}</p>
                         </a>
                     </li>
                 @elseif($user && $user->type === 'doctor')
                     <li class="nav-item">
                         <a href="{{ route('doctor.appointments') }}" class="nav-link">
                             <i class="nav-icon fas fa-calendar-alt"></i>
-                            <p>مواعيدي</p>
+                            <p>{{('My Appointments')}}</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('doctor.patients') }}" class="nav-link">
                             <i class="nav-icon fas fa-user-injured"></i>
-                            <p>مرضاي</p>
+                            <p>{{('My Patients')}}</p>
                         </a>
                     </li>
                 @elseif($user && $user->type === 'patient')
                     <li class="nav-item">
                         <a href="{{ route('patient.appointments') }}" class="nav-link">
                             <i class="nav-icon fas fa-calendar-check"></i>
-                            <p>مواعيدي</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('patient.profile') }}" class="nav-link">
-                            <i class="nav-icon fas fa-user"></i>
-                            <p>حسابي</p>
+                            <p>{{('My Appointments')}}</p>
                         </a>
                     </li>
                 @endif
-
             </ul>
         </nav>
     </div>
