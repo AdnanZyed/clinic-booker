@@ -101,19 +101,19 @@ class UserController extends Controller
 
         try {
             $baseRules = [
-                'name' => 'required',
-                'email' => 'required|email|unique:users',
-                'type' => 'required|in:admin,doctor,patient',
-                'password' => 'required|confirmed|min:6',
+                'name'     => 'required',
+                'email'    => 'required|email|unique:users,email,' . $user->id,
+                'type'     => 'required|in:admin,doctor,patient',
+                'password' => 'nullable|confirmed|min:6',
             ];
 
             if ($request->type === 'doctor') {
                 $baseRules = array_merge($baseRules, [
-                    'specialization'    => 'required|string|max:255',
-                    'qualifications'    => 'required|string|max:255',
-                    'available_days'    => 'required|array|min:1',
-                    'available_days.*'  => 'in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
-                    'session_duration'  => 'required|integer|min:5',
+                    'specialization'   => 'required|string|max:255',
+                    'qualifications'   => 'required|string|max:255',
+                    'available_days'   => 'required|array|min:1',
+                    'available_days.*' => 'in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
+                    'session_duration' => 'required|integer|min:5',
                 ]);
             }
 
@@ -131,10 +131,10 @@ class UserController extends Controller
                 $user->doctor()->updateOrCreate(
                     ['user_id' => $user->id],
                     [
-                        'specialization'    => $data['specialization'],
-                        'qualifications'    => $data['qualifications'],
-                        'available_days'    => json_encode($data['available_days']),
-                        'session_duration'  => $data['session_duration'],
+                        'specialization'   => $data['specialization'],
+                        'qualifications'   => $data['qualifications'],
+                        'available_days'   => json_encode($data['available_days']),
+                        'session_duration' => $data['session_duration'],
                     ]
                 );
             } else {

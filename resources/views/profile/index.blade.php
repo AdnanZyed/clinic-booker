@@ -7,11 +7,6 @@
 @stop
 
 @section('content')
-@if(session('status'))
-    <div class="alert alert-success">
-        {{ session('status') }}
-    </div>
-@endif
 
 <div class="row">
     <div class="col-md-6">
@@ -39,3 +34,11 @@
     </div>
 </div>
 @stop
+
+@section('js')
+@if (session('success'))
+    <script>
+        toastr.success('{{ session('success') }}');
+    </script>
+@endif
+@endsection

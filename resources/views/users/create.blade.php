@@ -8,9 +8,6 @@
 
 @section('content')
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
 
     <div class="card">
         <div class="card-header">
@@ -159,4 +156,9 @@
             toggleDoctorFields();
         });
     </script>
+    @if (session('success'))
+        <script>
+            toastr.success('{{ session('success') }}');
+        </script>
+    @endif
 @endpush

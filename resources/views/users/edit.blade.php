@@ -19,17 +19,8 @@
             <div class="card-body">
                 <div class="form-group mb-3">
                     <label for="type">{{ __('User Type') }}</label>
-                    <select name="type" id="type" class="form-control @error('type') is-invalid @enderror" required>
-                        <option value="patient" {{ old('type', $user->type) == 'patient' ? 'selected' : '' }}>
-                            {{ __('Patient') }}</option>
-                        <option value="doctor" {{ old('type', $user->type) == 'doctor' ? 'selected' : '' }}>
-                            {{ __('Doctor') }}</option>
-                        <option value="admin" {{ old('type', $user->type) == 'admin' ? 'selected' : '' }}>
-                            {{ __('Admin') }}</option>
-                    </select>
-                    @error('type')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                    <input type="text" class="form-control" value="{{ ucfirst($user->type) }}" disabled>
+                    <input type="hidden" name="type" value="{{ $user->type }}">
                 </div>
                 <div class="form-group mb-3">
                     <label for="name">{{ __('Name') }}</label>

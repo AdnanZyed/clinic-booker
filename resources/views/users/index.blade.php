@@ -7,21 +7,6 @@
 @stop
 
 @section('content')
-    @if (session('success'))
-        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1060;">
-            <div id="successToast"
-                class="alert alert-success alert-dismissible toast align-items-center text-bg-success border-0" role="alert"
-                aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-    @endif
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">{{ __('All Users') }}</h3>
@@ -59,17 +44,17 @@
                             <td>{{ $user->created_at->format('Y-m-d') }}</td>
                             <td>
                                 <a href="{{ route('users.show', $user->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> {{ __('Show') }}
+                                    <i class="fas fa-eye"></i>
                                 </a>
                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i> {{ __('Edit') }}
+                                    <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline"
                                     onsubmit="return confirm('{{ __('Are you sure?') }}');">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i> {{ __('Delete') }}
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
                             </td>
@@ -127,4 +112,9 @@
             }
         });
     </script>
+    @if (session('success'))
+        <script>
+            toastr.success('{{ session('success') }}');
+        </script>
+    @endif
 @stop

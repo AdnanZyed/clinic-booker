@@ -7,9 +7,6 @@
 @stop
 
 @section('content')
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
 
     <div class="card">
         <div class="card-header">
@@ -209,7 +206,7 @@
                 var button = $(event.relatedTarget);
                 var userType = button.data('type');
                 $('#userType').val(userType);
-                $('#addUserLabel').text('Add' + '' + userType);
+                $('#addUserLabel').text('Add' + ' ' + userType);
 
                 if (userType === 'doctor') {
                     $('#doctorFields').show();
@@ -253,6 +250,8 @@
                                     .trigger('change');
                             }
                         }
+
+                        toastr.success(`تم إنشاء ${response.user.type === 'doctor' ? 'الطبيب' : 'المستخدم'} ${response.user.name} بنجاح`);
                     },
                     error: function(xhr) {
                         if (xhr.status === 422) {
