@@ -12,7 +12,8 @@ class DoctorController extends Controller
      */
     public function index()
     {
-        //
+        $doctors = Doctor::with('user')->latest()->get();
+        return view('doctors.index', compact('doctors'));
     }
 
     /**

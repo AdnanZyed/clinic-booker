@@ -35,7 +35,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::middleware(['auth', 'user.type:patient'])->group(function () {
     Route::get('/dashboard/patient', [App\Http\Controllers\HomeController::class, 'patientDashboard']);
-    Route::resource('appointments', AppointmentController::class);
 });
 
 Route::middleware(['auth', 'user.type:doctor'])->group(function () {

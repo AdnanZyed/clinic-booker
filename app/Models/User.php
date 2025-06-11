@@ -59,4 +59,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(MedicalRecord::class, 'patient_id');
     }
+
+    public function scopePatients($query)
+    {
+        return $query->where('type', 'patient');
+    }
+
+    public function scopeDoctors($query)
+    {
+        return $query->where('type', 'doctor');
+    }
+
 }

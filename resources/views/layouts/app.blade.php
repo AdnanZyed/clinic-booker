@@ -3,7 +3,7 @@
 @section('title', config('app.name'))
 
 @section('content_header')
-    <h1>@yield('page_title', 'لوحة التحكم')</h1>
+    <h1>@yield('page_title', __('Dashboard'))</h1>
 @stop
 
 @section('content')
