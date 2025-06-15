@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Doctor;
+use App\Models\User;
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 
 class DoctorController extends Controller
@@ -22,6 +24,26 @@ class DoctorController extends Controller
     public function create()
     {
         //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function appointments()
+    {
+        $doctor = auth()->user();
+        $appointments = Appointment::where('doctor_id', $doctor->id)->latest()->get();
+        $patients = User::patients()->get();
+
+        return view('appointments.index', compact('appointments', 'patients'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function patients()
+    {
+        
     }
 
     /**

@@ -23,7 +23,9 @@
                     <tr>
                         <th>{{ __('ID') }}</th>
                         <th>{{ __('Patient') }}</th>
-                        <th>{{ __('Doctor') }}</th>
+                        @if (@$doctors)
+                            <th>{{ __('Doctor') }}</th>
+                        @endif
                         <th>{{ __('Date') }}</th>
                         <th>{{ __('Start Time') }}</th>
                         <th>{{ __('End Time') }}</th>
@@ -41,11 +43,13 @@
                                     {{ $appointment->patient_id == $patient->id ? $patient->name : '' }}
                                 @endforeach
                             </td>
-                            <td>
-                                @foreach ($doctors as $doctor)
-                                    {{ $appointment->doctor_id == $doctor->id ? $doctor->user->name : '' }}
-                                @endforeach
-                            </td>
+                            @if (@$doctors)
+                                <td>
+                                    @foreach ($doctors as $doctor)
+                                        {{ $appointment->doctor_id == $doctor->id ? $doctor->user->name : '' }}
+                                    @endforeach
+                                </td>
+                            @endif
                             <td>{{ $appointment->date }}</td>
                             <td>{{ $appointment->start_time }}</td>
                             <td>{{ $appointment->end_time }}</td>
@@ -84,14 +88,7 @@
     </div>
 @stop
 
-@section('css')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-@stop
-
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#appointments-table').DataTable({

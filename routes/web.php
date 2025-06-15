@@ -22,7 +22,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
     Route::resource('doctors', DoctorController::class);
-    Route::resource('appointments', AppointmentController::class);
     Route::resource('medical-records', MedicalRecordController::class);
 });
 
@@ -39,11 +38,16 @@ Route::middleware(['auth', 'user.type:patient'])->group(function () {
 
 Route::middleware(['auth', 'user.type:doctor'])->group(function () {
     Route::get('/dashboard/doctor', [DoctorController::class, 'dashboard']);
-    Route::resource('medical-records', MedicalRecordController::class);
+    Route::get('/dashboard/appointments', [DoctorController::class, 'appointments'])->name('doctor.appointments');
+    Route::get('/dashboard/patients', [DoctorController::class, 'patients'])->name('doctor.patients');
 });
 
 Route::middleware(['auth', 'user.type:admin'])->group(function () {
     //Route::get('/dashboard/admin', [AdminController::class, 'dashboard']);
     Route::resource('users', UserController::class);
     Route::resource('doctors', DoctorController::class);
+    Route::resource('medical-records', MedicalRecordController::class);
+});
+Route::middleware(['auth', 'user.type:doctor,admin'])->group(function () {
+    Route::resource('appointments', AppointmentController::class);
 });

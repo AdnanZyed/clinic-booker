@@ -188,7 +188,12 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
+                        <button type="submit" id="submitBtn" class="btn btn-primary">
+                            {{ __('Save') }}
+                        </button>
+                        <button class="btn btn-primary d-none" type="button" id="loadingBtn" disabled>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </button>
                         <button type="button" class="btn btn-secondary"
                             data-dismiss="modal">{{ __('Cancel') }}</button>
                     </div>
@@ -231,6 +236,10 @@
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
+                    beforeSend: function () {
+                        $('#submitBtn').addClass('d-none');
+                        $('#loadingBtn').removeClass('d-none');
+                    },
                     success: function(response) {
                         setTimeout(() => {
                             $('#addUserModal').modal('hide');
@@ -251,7 +260,12 @@
                             }
                         }
 
-                        toastr.success(`تم إنشاء ${response.user.type === 'doctor' ? 'الطبيب' : 'المستخدم'} ${response.user.name} بنجاح`);
+                        const doctorText = @json(__('doctor'));
+                        const patientText = @json(__('patient'));
+
+                        toastr.success(
+                            `The ${response.user.type === "doctor" ? doctorText : patientText} ${response.user.name} has been created successfully.`
+                            );
                     },
                     error: function(xhr) {
                         if (xhr.status === 422) {
@@ -265,6 +279,10 @@
                         } else {
                             alert('Error: ' + xhr.responseText);
                         }
+                    },
+                    complete: function () {
+                        $('#submitBtn').removeClass('d-none');
+                        $('#loadingBtn').addClass('d-none');
                     }
                 });
             });
