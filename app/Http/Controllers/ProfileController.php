@@ -17,25 +17,42 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = auth()->user()->load('doctor');
+        return view('profile.edit', compact('user'));
     }
 
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
+        $user = auth()->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $validatedUser = $request->validate([
+            'name'  => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+        ]);
+
+        $user->update($validatedUser);
+
+        if ($user->type === 'doctor' && $user->doctor) {
+            $validatedDoctor = $request->validate([
+                'specialization'    => ['required', 'string', 'max:255'],
+                'qualifications'    => ['required', 'string', 'max:255'],
+                'session_duration'  => ['required', 'integer', 'min:1'],
+                'available_days'    => ['required', 'array'],
+                'available_days.*'  => ['in:Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday'],
+            ]);
+
+            $user->doctor->update([
+                'specialization'    => $validatedDoctor['specialization'] ?? null,
+                'qualifications'    => $validatedDoctor['qualifications'] ?? null,
+                'session_duration'  => $validatedDoctor['session_duration'] ?? null,
+                'available_days'    => isset($validatedDoctor['available_days']) ? json_encode($validatedDoctor['available_days']) : null,
+            ]);
         }
 
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
 
     public function updatePassword(Request $request)
@@ -76,7 +93,7 @@ class ProfileController extends Controller
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => __('The current password is incorrect.')]);
         }
-        
+
         $user = $request->user();
 
         Auth::logout();

@@ -9,20 +9,24 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ __('Medical Record Details') }}</h3>
+            <h3 class="card-title">{{ auth()->user()->type != 'admin' ? 'My' : '' }} {{ __('Medical Record Details') }}</h3>
             <a href="{{ route('medical-records.index') }}" class="btn btn-sm btn-secondary float-right">{{ __('Back to list') }}</a>
         </div>
         <div class="card-body">
             <table class="table table-bordered">
                 <tbody>
-                    <tr>
-                        <th>{{ __('Patient') }}</th>
-                        <td>{{ $medicalRecord->patient->name }}</td>
-                    </tr>
-                    <tr>
-                        <th>{{ __('Doctor') }}</th>
-                        <td>{{ $medicalRecord->doctor->user->name }} - {{ $medicalRecord->doctor->specialization }}</td>
-                    </tr>
+                    @if(auth()->user()->type != 'patient')
+                        <tr>
+                            <th>{{ __('Patient') }}</th>
+                            <td>{{ $medicalRecord->patient->name }}</td>
+                        </tr>
+                    @endif
+                    @if(auth()->user()->type != 'doctor')
+                        <tr>
+                            <th>{{ __('Doctor') }}</th>
+                            <td>{{ $medicalRecord->doctor->user->name }} - {{ $medicalRecord->doctor->specialization }}</td>
+                        </tr>
+                    @endif
                     <tr>
                         <th>{{ __('Date') }}</th>
                         <td>{{ $medicalRecord->date }}</td>

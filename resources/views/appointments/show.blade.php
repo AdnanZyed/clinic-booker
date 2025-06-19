@@ -14,8 +14,12 @@
     </div>
 
     <div class="card-body">
-        <p><strong>{{ __('Patient') }}:</strong> {{ $appointment->patient->name ?? '-' }}</p>
-        <p><strong>{{ __('Doctor') }}:</strong> {{ $appointment->doctor->user->name ?? '-' }} - ({{ $appointment->doctor->specialization ?? '' }})</p>
+        @if(auth()->user()->type != 'patient')
+            <p><strong>{{ __('Patient') }}:</strong> {{ $appointment->patient->name ?? '-' }}</p>
+        @endif
+        @if(auth()->user()->type != 'doctor')
+            <p><strong>{{ __('Doctor') }}:</strong> {{ $appointment->doctor->user->name ?? '-' }} - ({{ $appointment->doctor->specialization ?? '' }})</p>
+        @endif
         <p><strong>{{ __('Date') }}:</strong> {{ $appointment->date }}</p>
         <p><strong>{{ __('Start Time') }}:</strong> {{ $appointment->start_time }}</p>
         <p><strong>{{ __('End Time') }}:</strong> {{ $appointment->end_time }}</p>

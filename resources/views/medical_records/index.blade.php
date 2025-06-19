@@ -9,20 +9,26 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ __('All Medical Records') }}</h3>
-            <div class="card-tools">
-                <a href="{{ route('medical-records.create') }}" class="btn btn-success btn-sm">
-                    <i class="fas fa-medical-records-plus"></i> {{ __('Add New Medical Record') }}
-                </a>
-            </div>
+            <h3 class="card-title">{{ auth()->user()->type != 'admin' ? 'My' : '' }} {{ __('Medical Records') }}</h3>
+            @if(auth()->user()->type != 'patient')
+                <div class="card-tools">
+                    <a href="{{ route('medical-records.create') }}" class="btn btn-success btn-sm">
+                        <i class="fas fa-medical-records-plus"></i> {{ __('Add New Medical Record') }}
+                    </a>
+                </div>
+            @endif
         </div>
         <div class="card-body">
             <table id="records-table" class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>{{ __('ID') }}</th>
-                        <th>{{ __('Patient') }}</th>
-                        <th>{{ __('Doctor') }}</th>
+                        @if(auth()->user()->type != 'patient')
+                            <th>{{ __('Patient') }}</th>
+                        @endif
+                        @if(auth()->user()->type != 'doctor')
+                            <th>{{ __('Doctor') }}</th>
+                        @endif
                         <th>{{ __('Date') }}</th>
                         <th>{{ __('Actions') }}</th>
                     </tr>
@@ -31,24 +37,34 @@
                     @foreach ($medicalRecords as $record)
                         <tr>
                             <td>{{ $record->id }}</td>
-                            <td>{{ $record->patient->name }}</td>
-                            <td>{{ $record->doctor->user->name ?? '-' }}</td>
+                            @if(auth()->user()->type != 'patient')
+                                <td>{{ $record->patient->name }}</td>
+                            @endif
+                            @if(auth()->user()->type != 'doctor')
+                                <td>{{ $record->doctor->user->name ?? '-' }}</td>
+                            @endif
                             <td>{{ $record->date }}</td>
                             <td>
                                 <a href="{{ route('medical-records.show', $record->id) }}" class="btn btn-info btn-sm">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('medical-records.edit', $record->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('medical-records.destroy', $record->id) }}" method="POST"
-                                    class="d-inline" onsubmit="return confirm('{{ __('Are you sure?') }}');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                @php
+                                    $canEdit = auth()->user()->type === 'admin' ||
+                                            (auth()->user()->type === 'doctor' && $record->doctor->user_id === auth()->id());
+                                @endphp
+                                @if($canEdit)
+                                    <a href="{{ route('medical-records.edit', $record->id) }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('medical-records.destroy', $record->id) }}" method="POST"
+                                        class="d-inline" onsubmit="return confirm('{{ __('Are you sure?') }}');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -61,13 +77,14 @@
 @section('js')
     <script>
         $(document).ready(function() {
+            let lastColumnIndex = $('#records-table thead th').length - 1;
             $('#records-table').DataTable({
                 responsive: true,
                 /* language: {
                     url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json"
                 }, */
                 columnDefs: [{
-                    targets: 4,
+                    targets: lastColumnIndex,
                     searchable: false,
                     orderable: false
                 }],
@@ -90,6 +107,12 @@
     @if (session('success'))
         <script>
             toastr.success('{{ session('success') }}');
+        </script>
+    @endif
+    
+    @if (session('error'))
+        <script>
+            toastr.error('{{ session('error') }}');
         </script>
     @endif
 @stop

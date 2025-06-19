@@ -3,10 +3,13 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\MedicalRecordController;
 use Illuminate\Support\Facades\Route;
+
+Auth::routes();
+
+require __DIR__.'/auth.php';
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,12 +24,32 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
-    Route::resource('doctors', DoctorController::class);
+    Route::resource('appointments', AppointmentController::class);
+});
+
+// صلاحيات للمسؤول فقط
+Route::middleware(['auth', 'user.type:admin'])->group(function () {
+    Route::resource('users', UserController::class);
+});
+
+// صلاحيات مشتركة: طبيب أو مسؤول (للسماح بإنشاء وإدارة المواعيد)
+Route::middleware(['auth', 'user.type:doctor,admin'])->group(function () {
+});
+Route::middleware(['auth', 'user.type:doctor'])->group(function () {
+    Route::get('/patients', [UserController::class, 'patients'])->name('patients');
+    Route::get('patients/{user}', [UserController::class, 'show'])->name('patients.show');
+});
+
+// صلاحيات مشتركة: مريض، طبيب، مسؤول لعرض وإنشاء تقاريرهم فقط
+Route::middleware(['auth'])->group(function () {
     Route::resource('medical-records', MedicalRecordController::class);
 });
 
-require __DIR__.'/auth.php';
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+
+
+/* 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -50,4 +73,4 @@ Route::middleware(['auth', 'user.type:admin'])->group(function () {
 });
 Route::middleware(['auth', 'user.type:doctor,admin'])->group(function () {
     Route::resource('appointments', AppointmentController::class);
-});
+}); */

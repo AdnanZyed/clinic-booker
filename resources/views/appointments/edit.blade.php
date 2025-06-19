@@ -19,37 +19,45 @@
             @method('PUT')
             <div class="card-body">
 
-                <div class="form-group">
-                    <label for="patient_id">{{ __('Patient') }}</label>
-                    <select name="patient_id" id="patient_id" class="form-control @error('patient_id') is-invalid @enderror"
-                        required>
-                        @foreach ($patients as $patient)
-                            <option value="{{ $patient->id }}"
-                                {{ $appointment->patient_id == $patient->id ? 'selected' : '' }}>
-                                {{ $patient->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('patient_id')
-                        <span class="invalid-feedback">{{ $message }}</span>
-                    @enderror
-                </div>
+                @if(auth()->user()->type != 'patient')
+                    <div class="form-group">
+                        <label for="patient_id">{{ __('Patient') }}</label>
+                        <select name="patient_id" id="patient_id" class="form-control @error('patient_id') is-invalid @enderror"
+                            required>
+                            @foreach ($patients as $patient)
+                                <option value="{{ $patient->id }}"
+                                    {{ $appointment->patient_id == $patient->id ? 'selected' : '' }}>
+                                    {{ $patient->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('patient_id')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @else
+                    <input type="hidden" name="patient_id" value="{{ auth()->user()->id }}">
+                @endif
 
-                <div class="form-group">
-                    <label for="doctor_id">{{ __('Doctor') }}</label>
-                    <select name="doctor_id" id="doctor_id" class="form-control @error('doctor_id') is-invalid @enderror"
-                        required>
-                        @foreach ($doctors as $doctor)
-                            <option value="{{ $doctor->id }}"
-                                {{ $appointment->doctor_id == $doctor->id ? 'selected' : '' }}>
-                                {{ $doctor->user->name }} - {{ $doctor->specialization }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('doctor_id')
-                        <span class="invalid-feedback">{{ $message }}</span>
-                    @enderror
-                </div>
+                @if(auth()->user()->type != 'doctor')
+                    <div class="form-group">
+                        <label for="doctor_id">{{ __('Doctor') }}</label>
+                        <select name="doctor_id" id="doctor_id" class="form-control @error('doctor_id') is-invalid @enderror"
+                            required>
+                            @foreach ($doctors as $doctor)
+                                <option value="{{ $doctor->id }}"
+                                    {{ $appointment->doctor_id == $doctor->id ? 'selected' : '' }}>
+                                    {{ $doctor->user->name }} - {{ $doctor->specialization }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('doctor_id')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @else
+                    <input type="hidden" name="doctor_id" value="{{ auth()->user()->id }}">
+                @endif
 
                 <div class="form-group">
                     <label for="date">{{ __('Date') }}</label>
@@ -83,20 +91,24 @@
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="status">{{ __('Status') }}</label>
-                    <select name="status" id="status" class="form-control @error('status') is-invalid @enderror"
-                        required>
-                        @foreach (['pending', 'confirmed', 'cancelled', 'completed'] as $status)
-                            <option value="{{ $status }}" {{ $appointment->status === $status ? 'selected' : '' }}>
-                                {{ ucfirst($status) }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('status')
-                        <span class="invalid-feedback">{{ $message }}</span>
-                    @enderror
-                </div>
+                @if(auth()->user()->type != 'patient')
+                    <div class="form-group">
+                        <label for="status">{{ __('Status') }}</label>
+                        <select name="status" id="status" class="form-control @error('status') is-invalid @enderror"
+                            required>
+                            @foreach (['pending', 'confirmed', 'cancelled', 'completed'] as $status)
+                                <option value="{{ $status }}" {{ $appointment->status === $status ? 'selected' : '' }}>
+                                    {{ ucfirst($status) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('status')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @else
+                    <input type="hidden" name="status" value="pending">
+                @endif
 
                 <div class="form-group">
                     <label for="notes">{{ __('Notes') }}</label>

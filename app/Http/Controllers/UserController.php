@@ -20,6 +20,24 @@ class UserController extends Controller
     }
 
     /**
+     * Display a listing of the patients related to the logged-in doctor.
+     */
+    public function patients()
+    {
+        $user = auth()->user();
+        if (!$user->doctor) {
+            return redirect()->back()->with('error', __('No doctor profile associated with this account.'));
+        }
+
+        $patients = User::whereHas('appointments', function ($query) use ($user) {
+            $query->where('doctor_id', $user->doctor->id);
+        })->distinct()->get();
+
+        return view('users.patients', compact('patients'));
+    }
+
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -83,9 +101,25 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $user->load('doctor');
+        $auth = auth()->user();
 
-        return view('users.show', ['user' => $user, 'doctor' => $user->doctor,]);
+        if ($auth->type === 'admin') {
+            $user->load('doctor');
+            return view('users.show', ['user' => $user, 'doctor' => $user->doctor]);
+        }
+
+        if ($auth->type === 'doctor') {
+            $isMyPatient = $user->appointments()->where('doctor_id', $auth->doctor->id)->exists();
+
+            if (! $isMyPatient) {
+                return redirect()->back()->with('error', __('You are not authorized to view this patient.'));
+            }
+
+            $user->load('doctor');
+            return view('users.show', ['user' => $user, 'doctor' => $user->doctor]);
+        }
+
+        return redirect()->route('dashboard')->with('error', __('Unauthorized.'));
     }
 
     public function edit(User $user)

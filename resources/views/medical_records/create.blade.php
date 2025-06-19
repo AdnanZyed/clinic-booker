@@ -9,7 +9,7 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ __('Add new Medical Record') }}</h3>
+            <h3 class="card-title">{{ __('Add New Medical Record') }}</h3>
             <a href="{{ route('medical-records.index') }}"
                class="btn btn-sm btn-secondary float-right">{{ __('Back to list') }}</a>
         </div>

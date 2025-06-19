@@ -19,47 +19,59 @@
             @csrf
             <div class="card-body">
 
-                <div class="form-group">
-                    <label for="patient_id">{{ __('Patient') }}</label>
-                    <div class="input-group">
-                        <select name="patient_id" id="patient_id" class="form-control" required>
-                            <option value="">{{ __('Choose patient') }}</option>
-                            @foreach ($patients as $patient)
-                                <option value="{{ $patient->id }}"
-                                    {{ old('patient_id') == $patient->id ? 'selected' : '' }}>
-                                    {{ $patient->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-primary" data-toggle="modal"
-                                data-target="#addUserModal" data-type="patient">
-                                {{ __('Add Patient') }}
-                            </button>
+                @if(auth()->user()->type != 'patient')
+                    <div class="form-group">
+                        <label for="patient_id">{{ __('Patient') }}</label>
+                        <div class="input-group">
+                            <select name="patient_id" id="patient_id" class="form-control" required>
+                                <option value="">{{ __('Choose patient') }}</option>
+                                @foreach ($patients as $patient)
+                                    <option value="{{ $patient->id }}"
+                                        {{ old('patient_id') == $patient->id ? 'selected' : '' }}>
+                                        {{ $patient->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @if(auth()->user()->type == 'admin')
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-primary" data-toggle="modal"
+                                        data-target="#addUserModal" data-type="patient">
+                                        {{ __('Add Patient') }}
+                                    </button>
+                                </div>
+                            @endif
                         </div>
                     </div>
-                </div>
+                @else
+                    <input type="hidden" name="patient_id" value="{{ auth()->user()->id }}">
+                @endif
 
-                <div class="form-group">
-                    <label for="doctor_id">{{ __('Doctor') }}</label>
-                    <div class="input-group">
-                        <select name="doctor_id" id="doctor_id" class="form-control" required>
-                            <option value="">{{ __('Choose doctor') }}</option>
-                            @foreach ($doctors as $doctor)
-                                <option value="{{ $doctor->id }}"
-                                    {{ old('doctor_id') == $doctor->id ? 'selected' : '' }}>
-                                    {{ $doctor->user->name }} - {{ $doctor->specialization }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-primary" data-toggle="modal"
-                                data-target="#addUserModal" data-type="doctor">
-                                {{ __('Add Doctor') }}
-                            </button>
+                @if(auth()->user()->type != 'doctor')
+                    <div class="form-group">
+                        <label for="doctor_id">{{ __('Doctor') }}</label>
+                        <div class="input-group">
+                            <select name="doctor_id" id="doctor_id" class="form-control" required>
+                                <option value="">{{ __('Choose doctor') }}</option>
+                                @foreach ($doctors as $doctor)
+                                    <option value="{{ $doctor->id }}"
+                                        {{ old('doctor_id') == $doctor->id ? 'selected' : '' }}>
+                                        {{ $doctor->user->name }} - {{ $doctor->specialization }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @if(auth()->user()->type == 'admin')
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-primary" data-toggle="modal"
+                                        data-target="#addUserModal" data-type="doctor">
+                                        {{ __('Add Doctor') }}
+                                    </button>
+                                </div>
+                            @endif
                         </div>
                     </div>
-                </div>
+                @else
+                    <input type="hidden" name="doctor_id" value="{{ auth()->user()->id }}">
+                @endif
 
                 <div class="form-group">
                     <label for="date">{{ __('Date') }}</label>
@@ -90,23 +102,27 @@
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="status">{{ __('Status') }}</label>
-                    <select name="status" id="status" class="form-control @error('status') is-invalid @enderror"
-                        required>
-                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>{{ __('Pending') }}
-                        </option>
-                        <option value="confirmed" {{ old('status') == 'confirmed' ? 'selected' : '' }}>
-                            {{ __('Confirmed') }}</option>
-                        <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>
-                            {{ __('Cancelled') }}</option>
-                        <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>
-                            {{ __('Completed') }}</option>
-                    </select>
-                    @error('status')
-                        <span class="invalid-feedback">{{ $message }}</span>
-                    @enderror
-                </div>
+                @if(auth()->user()->type != 'patient')
+                    <div class="form-group">
+                        <label for="status">{{ __('Status') }}</label>
+                        <select name="status" id="status" class="form-control @error('status') is-invalid @enderror"
+                            required>
+                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>{{ __('Pending') }}
+                            </option>
+                            <option value="confirmed" {{ old('status') == 'confirmed' ? 'selected' : '' }}>
+                                {{ __('Confirmed') }}</option>
+                            <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>
+                                {{ __('Cancelled') }}</option>
+                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>
+                                {{ __('Completed') }}</option>
+                        </select>
+                        @error('status')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @else
+                    <input type="hidden" name="status" value="pending">
+                @endif
 
                 <div class="form-group">
                     <label for="notes">{{ __('Notes') }}</label>
@@ -124,83 +140,85 @@
     </div>
 
     {{-- New User Modal --}}
-    <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form id="addUserForm">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addUserLabel"></h5>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    @if(auth()->user()->type == 'admin')
+        <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <form id="addUserForm">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addUserLabel"></h5>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="type" id="userType">
+
+                            <div class="form-group">
+                                <label for="name">{{ __('Name') }}</label>
+                                <input type="text" name="name" class="form-control" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">{{ __('Email') }}</label>
+                                <input type="email" name="email" class="form-control" required />
+                            </div>
+
+                            {{-- Doctor Fields --}}
+                            <div id="doctorFields" style="display: none;">
+                                <div class="form-group">
+                                    <label for="specialization">{{ __('Specialization') }}</label>
+                                    <input type="text" name="specialization" class="form-control" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="qualifications">{{ __('Qualifications') }}</label>
+                                    <input type="text" name="qualifications" class="form-control" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="available_days">{{ __('Available Days') }}</label>
+                                    <select name="available_days[]" class="form-control" multiple>
+                                        @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
+                                            <option value="{{ $day }}">{{ __($day) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="session_duration">{{ __('Session Duration (minutes)') }}</label>
+                                    <input type="number" name="session_duration" class="form-control" min="5" />
+                                </div>
+                            </div>
+                            {{-- End Doctor Fields --}}
+
+                            <div class="form-group">
+                                <label for="password">{{ __('Password') }}</label>
+                                <input type="password" name="password" class="form-control" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password_confirmation">{{ __('Confirm Password') }}</label>
+                                <input type="password" name="password_confirmation" class="form-control" required />
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" id="submitBtn" class="btn btn-primary">
+                                {{ __('Save') }}
+                            </button>
+                            <button class="btn btn-primary d-none" type="button" id="loadingBtn" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">{{ __('Cancel') }}</button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="type" id="userType">
-
-                        <div class="form-group">
-                            <label for="name">{{ __('Name') }}</label>
-                            <input type="text" name="name" class="form-control" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">{{ __('Email') }}</label>
-                            <input type="email" name="email" class="form-control" required />
-                        </div>
-
-                        {{-- Doctor Fields --}}
-                        <div id="doctorFields" style="display: none;">
-                            <div class="form-group">
-                                <label for="specialization">{{ __('Specialization') }}</label>
-                                <input type="text" name="specialization" class="form-control" />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="qualifications">{{ __('Qualifications') }}</label>
-                                <input type="text" name="qualifications" class="form-control" />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="available_days">{{ __('Available Days') }}</label>
-                                <select name="available_days[]" class="form-control" multiple>
-                                    @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
-                                        <option value="{{ $day }}">{{ __($day) }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="session_duration">{{ __('Session Duration (minutes)') }}</label>
-                                <input type="number" name="session_duration" class="form-control" min="5" />
-                            </div>
-                        </div>
-                        {{-- End Doctor Fields --}}
-
-                        <div class="form-group">
-                            <label for="password">{{ __('Password') }}</label>
-                            <input type="password" name="password" class="form-control" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password_confirmation">{{ __('Confirm Password') }}</label>
-                            <input type="password" name="password_confirmation" class="form-control" required />
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" id="submitBtn" class="btn btn-primary">
-                            {{ __('Save') }}
-                        </button>
-                        <button class="btn btn-primary d-none" type="button" id="loadingBtn" disabled>
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal">{{ __('Cancel') }}</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
+    @endif
 
 @stop
 

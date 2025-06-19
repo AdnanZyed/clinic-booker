@@ -299,7 +299,8 @@ return [
     */
 
     'menu' => [
-        // Navbar items:
+
+        // 🔍 Navbar items
         [
             'type' => 'navbar-search',
             'text' => 'search',
@@ -310,89 +311,92 @@ return [
             'topnav_right' => true,
         ],
 
-        // Sidebar items:
+        // 🔍 Sidebar search
         [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
+
+        // Admin menu
         [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
+            'text' => 'Users',
+            'url'  => 'users/',
+            'icon' => 'fas fa-users',
+            'can'  => 'is-admin',
         ],
         [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
+            'text' => 'Appointments',
+            'icon' => 'fas fa-calendar',
+            'can'  => 'is-admin',
             'submenu' => [
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'All Appointments',
+                    'url' => 'appointments',
+                    'icon' => 'fas fa-angle-right',
                 ],
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'Add Appointment',
+                    'url'  => 'appointments/create', 
+                    'icon' => 'fas fa-angle-right',
                 ],
             ],
         ],
-        ['header' => 'labels'],
+        
+        // General menu
         [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
+            'text' => 'Medical Records',
+            'icon' => 'fas fa-notes-medical',
+            'submenu' => [
+                [
+                    'text' => 'Medical Records',
+                    'url' => 'medical-records',
+                    'icon' => 'fas fa-angle-right',
+                ],
+                [
+                    'text' => 'Add Medical Record',
+                    'url'  => 'medical-records/create', 
+                    'icon' => 'fas fa-angle-right',
+                    'can'  => 'is-doctor-or-admin',
+                ],
+            ],
         ],
+
+        // Shared menu ( doctor + patient )
         [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
+            'text' => 'Appointments',
+            'icon' => 'fas fa-calendar',
+            'can'  => 'is-doctor-or-patient',
+            'submenu' => [
+                [
+                    'text' => 'My Appointments',
+                    'url' => 'appointments',
+                    'icon' => 'fas fa-angle-right',
+                ],
+                [
+                    'text' => 'Add Appointment',
+                    'url'  => 'appointments/create', 
+                    'icon' => 'fas fa-angle-right',
+                ],
+            ],
         ],
+
+        // 👨‍⚕️ Doctor-specific menu
         [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
+            'text' => 'My Patients',
+            'url'  => 'patients',
+            'icon' => 'fas fa-user-injured',
+            'can'  => 'is-doctor',
+        ],
+
+        // Settings
+        ['header' => 'Account Settings'],
+        [
+            'text' => 'My Profile',
+            'url'  => 'profile',
+            'icon' => 'fas fa-user-cog',
         ],
     ],
+
 
     /*
     |--------------------------------------------------------------------------

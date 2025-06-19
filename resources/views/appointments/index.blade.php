@@ -10,10 +10,15 @@
 
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ __('All Appointments') }}</h3>
+            @if (auth()->user()->type == 'admin')
+                <h3 class="card-title">{{ __('All Appointments') }}</h3>
+            @else
+                <h3 class="card-title">{{ __('My Appointments') }}</h3>
+            @endif
+
             <div class="card-tools">
                 <a href="{{ route('appointments.create') }}" class="btn btn-success btn-sm">
-                    <i class="fas fa-appointment-plus"></i> {{ __('Add New Appointments') }}
+                    <i class="fas fa-appointment-plus"></i> {{ __('Add New Appointment') }}
                 </a>
             </div>
         </div>
@@ -22,8 +27,10 @@
                 <thead>
                     <tr>
                         <th>{{ __('ID') }}</th>
-                        <th>{{ __('Patient') }}</th>
-                        @if (@$doctors)
+                        @if (auth()->user()->type != 'patient')
+                            <th>{{ __('Patient') }}</th>
+                        @endif
+                        @if (auth()->user()->type != 'doctor')
                             <th>{{ __('Doctor') }}</th>
                         @endif
                         <th>{{ __('Date') }}</th>
@@ -38,15 +45,26 @@
                     @foreach ($appointments as $appointment)
                         <tr>
                             <td>{{ $appointment->id }}</td>
-                            <td>
-                                @foreach ($patients as $patient)
-                                    {{ $appointment->patient_id == $patient->id ? $patient->name : '' }}
-                                @endforeach
-                            </td>
-                            @if (@$doctors)
+                            @if (auth()->user()->type != 'patient')
+                                <td>
+                                    @foreach ($patients as $patient)
+                                        @php $route = auth()->user()->type == 'admin' ? 'users.show' : 'patients.show'; @endphp
+                                        <a href="{{ route($route, $patient->id) }}">
+                                            {{ $appointment->patient_id == $patient->id ? $patient->name : '' }}
+                                        </a>
+                                    @endforeach
+                                </td>
+                            @endif
+                            @if (auth()->user()->type != 'doctor')
                                 <td>
                                     @foreach ($doctors as $doctor)
-                                        {{ $appointment->doctor_id == $doctor->id ? $doctor->user->name : '' }}
+                                        @if(auth()->user()->type != 'patient')
+                                            <a href="{{ route('users.show', $doctor->user->id) }}">
+                                                {{ $appointment->doctor_id == $doctor->id ? $doctor->user->name : '' }}
+                                            </a>
+                                        @else 
+                                            {{ $appointment->doctor_id == $doctor->id ? $doctor->user->name : '' }}
+                                        @endif
                                     @endforeach
                                 </td>
                             @endif
@@ -59,7 +77,7 @@
                                     $color = $colors[$appointment->status] ?? 'secondary';
                                 @endphp
                                 <span class="badge badge-{{ $color }}">
-                                    {{ ucfirst($appointment->status) }}
+                                    {{ ucfirst(string: $appointment->status) }}
                                 </span>
                             </td>
                             <td>{{ $appointment->notes }}</td>
@@ -67,18 +85,20 @@
                                 <a href="{{ route('appointments.show', $appointment->id) }}" class="btn btn-info btn-sm">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('appointments.edit', $appointment->id) }}"
-                                    class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('appointments.destroy', $appointment->id) }}" method="POST"
-                                    class="d-inline" onsubmit="return confirm('{{ __('Are you sure?') }}');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                @if((auth()->user()->type == 'patient' & $appointment->status != 'pending') || auth()->user()->type != 'patient' )
+                                    <a href="{{ route('appointments.edit', $appointment->id) }}"
+                                        class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('appointments.destroy', $appointment->id) }}" method="POST"
+                                        class="d-inline" onsubmit="return confirm('{{ __('Are you sure?') }}');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -120,6 +140,11 @@
     @if (session('success'))
         <script>
             toastr.success('{{ session('success') }}');
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            toastr.error('{{ session('error') }}');
         </script>
     @endif
 @stop
