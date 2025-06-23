@@ -58,11 +58,11 @@
                             @if (auth()->user()->type != 'doctor')
                                 <td>
                                     @foreach ($doctors as $doctor)
-                                        @if(auth()->user()->type != 'patient')
+                                        @if (auth()->user()->type != 'patient')
                                             <a href="{{ route('users.show', $doctor->user->id) }}">
                                                 {{ $appointment->doctor_id == $doctor->id ? $doctor->user->name : '' }}
                                             </a>
-                                        @else 
+                                        @else
                                             {{ $appointment->doctor_id == $doctor->id ? $doctor->user->name : '' }}
                                         @endif
                                     @endforeach
@@ -71,21 +71,35 @@
                             <td>{{ $appointment->date }}</td>
                             <td>{{ $appointment->start_time }}</td>
                             <td>{{ $appointment->end_time }}</td>
-                            <td>
+                            <td class="d-flex justify-center">
                                 @php
-                                    $colors = ['pending' => 'warning', 'confirmed' => 'primary', 'cancelled' => 'danger', 'completed' => 'success'];
+                                    $colors = [
+                                        'pending' => 'warning',
+                                        'confirmed' => 'primary',
+                                        'cancelled' => 'danger',
+                                        'completed' => 'success',
+                                    ];
                                     $color = $colors[$appointment->status] ?? 'secondary';
                                 @endphp
-                                <span class="badge badge-{{ $color }}">
-                                    {{ ucfirst(string: $appointment->status) }}
-                                </span>
+                                <select name="status" id="{{ $appointment->id }}"
+                                    class="form-control status @error('status') is-invalid @enderror"
+                                    required>
+                                    @foreach (['pending', 'confirmed', 'cancelled', 'completed'] as $status)
+                                        <option value="{{ $status }}"
+                                            {{ $appointment->status === $status ? 'selected' : '' }}>
+                                            {{ ucfirst($status) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span class="spinner-border spinner-border-sm d-none ml-2 loading" role="status" aria-hidden="true"></span>
+                                
                             </td>
                             <td>{{ $appointment->notes }}</td>
                             <td>
                                 <a href="{{ route('appointments.show', $appointment->id) }}" class="btn btn-info btn-sm">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                @if((auth()->user()->type == 'patient' & $appointment->status != 'pending') || auth()->user()->type != 'patient' )
+                                @if ((auth()->user()->type == 'patient') & ($appointment->status == 'pending') || auth()->user()->type != 'patient')
                                     <a href="{{ route('appointments.edit', $appointment->id) }}"
                                         class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
@@ -135,6 +149,29 @@
                 });
                 toast.show();
             }
+        });
+
+        $('.status').change(function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '{{ route('appointments.update', $appointment->id) }}',
+                type: 'PUT',
+                data: {'status': $(this).val()},
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                beforeSend: function() {
+                    $('.loading').removeClass('d-none');
+                },
+                success: function(response) {
+                    console.log('Status changed to ' + response.status + ' successfully');
+                    toastr.success('Status changed to ' + response.status + ' successfully');
+                },
+                complete: function() {
+                    $('.loading').addClass('d-none');
+                }
+            });
         });
     </script>
     @if (session('success'))

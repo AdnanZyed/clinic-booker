@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\User;
 use App\Models\Doctor;
+use App\Notifications\NewAppointmentNotification;
+use App\Notifications\UpdateAppointmentNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -76,7 +78,10 @@ class AppointmentController extends Controller
             return redirect()->route('appointments.index')->with('error', __('You can only manage your own appointments.'));
         }
 
-        Appointment::create($validated);
+        $appointment = Appointment::create($validated);
+
+        $doctorUser = $appointment->doctor->user;
+        $doctorUser->notify(new NewAppointmentNotification($appointment));
 
         return redirect()->route('appointments.index')->with('success', __('Appointment created successfully.'));
     }
@@ -119,6 +124,13 @@ class AppointmentController extends Controller
 
     public function update(Request $request, Appointment $appointment)
     {
+        if ($request->ajax()) {
+            $appointment = $appointment->update([
+                'status' => $request->status,
+            ]);
+            return response()->json($request);
+        }
+
         $user = Auth::user();
 
         if (
@@ -146,7 +158,16 @@ class AppointmentController extends Controller
             return redirect()->route('appointments.index')->with('error', __('Cannot assign appointment to another patient.'));
         }
 
+        if($appointment->status != $request->status) {
+            $type = 'status';
+        } else {
+            $type = 'all';
+        }
+        
         $appointment->update($data);
+
+        $patient = $appointment->patient;
+        $patient->notify(new UpdateAppointmentNotification($appointment, $type));
 
         return redirect()->route('appointments.index')->with('success', __('Appointment updated successfully.'));
     }

@@ -300,7 +300,7 @@ return [
 
     'menu' => [
 
-        // 🔍 Navbar items
+        // Navbar items
         [
             'type' => 'navbar-search',
             'text' => 'search',
@@ -336,7 +336,35 @@ return [
                 ],
                 [
                     'text' => 'Add Appointment',
-                    'url'  => 'appointments/create', 
+                    'url'  => 'appointments/create',
+                    'icon' => 'fas fa-angle-right',
+                ],
+            ],
+        ],
+
+        
+        // Doctor-specific menu
+        [
+            'text' => 'My Patients',
+            'url'  => 'patients',
+            'icon' => 'fas fa-user-injured',
+            'can'  => 'is-doctor',
+        ],
+
+        // Shared menu ( doctor + patient )
+        [
+            'text' => 'Appointments',
+            'icon' => 'fas fa-calendar',
+            'can'  => 'is-doctor-or-patient',
+            'submenu' => [
+                [
+                    'text' => 'My Appointments',
+                    'url' => 'appointments',
+                    'icon' => 'fas fa-angle-right',
+                ],
+                [
+                    'text' => 'Add Appointment',
+                    'url'  => 'appointments/create',
                     'icon' => 'fas fa-angle-right',
                 ],
             ],
@@ -354,38 +382,11 @@ return [
                 ],
                 [
                     'text' => 'Add Medical Record',
-                    'url'  => 'medical-records/create', 
+                    'url'  => 'medical-records/create',
                     'icon' => 'fas fa-angle-right',
                     'can'  => 'is-doctor-or-admin',
                 ],
             ],
-        ],
-
-        // Shared menu ( doctor + patient )
-        [
-            'text' => 'Appointments',
-            'icon' => 'fas fa-calendar',
-            'can'  => 'is-doctor-or-patient',
-            'submenu' => [
-                [
-                    'text' => 'My Appointments',
-                    'url' => 'appointments',
-                    'icon' => 'fas fa-angle-right',
-                ],
-                [
-                    'text' => 'Add Appointment',
-                    'url'  => 'appointments/create', 
-                    'icon' => 'fas fa-angle-right',
-                ],
-            ],
-        ],
-
-        // 👨‍⚕️ Doctor-specific menu
-        [
-            'text' => 'My Patients',
-            'url'  => 'patients',
-            'icon' => 'fas fa-user-injured',
-            'can'  => 'is-doctor',
         ],
 
         // Settings

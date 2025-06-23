@@ -48,29 +48,13 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
+Route::get('/notifications/read/{id}', function ($id) {
+    $notification = Auth::user()->notifications()->findOrFail($id);
+    $notification->markAsRead();
+    return redirect($notification->data['url']);
+})->name('notifications.read');
 
-/* 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-
-Route::middleware(['auth', 'user.type:patient'])->group(function () {
-    Route::get('/dashboard/patient', [App\Http\Controllers\HomeController::class, 'patientDashboard']);
-});
-
-Route::middleware(['auth', 'user.type:doctor'])->group(function () {
-    Route::get('/dashboard/doctor', [DoctorController::class, 'dashboard']);
-    Route::get('/dashboard/appointments', [DoctorController::class, 'appointments'])->name('doctor.appointments');
-    Route::get('/dashboard/patients', [DoctorController::class, 'patients'])->name('doctor.patients');
-});
-
-Route::middleware(['auth', 'user.type:admin'])->group(function () {
-    //Route::get('/dashboard/admin', [AdminController::class, 'dashboard']);
-    Route::resource('users', UserController::class);
-    Route::resource('doctors', DoctorController::class);
-    Route::resource('medical-records', MedicalRecordController::class);
-});
-Route::middleware(['auth', 'user.type:doctor,admin'])->group(function () {
-    Route::resource('appointments', AppointmentController::class);
-}); */
+Route::get('/notifications/read-all', function () {
+    Auth::user()->unreadNotifications->markAsRead();
+    return back();
+})->name('notifications.readAll');

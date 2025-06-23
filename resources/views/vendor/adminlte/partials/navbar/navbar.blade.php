@@ -26,6 +26,7 @@
 
         {{-- User menu link --}}
         @if(Auth::user())
+            @include('adminlte::partials.navbar.notification-menu')
             @if(config('adminlte.usermenu_enabled'))
                 @include('adminlte::partials.navbar.menu-item-dropdown-user-menu')
             @else
