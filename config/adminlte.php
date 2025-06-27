@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'use_ico_only' => false,
+    'use_ico_only' => true,
     'use_full_favicon' => false,
 
     /*
@@ -64,7 +64,7 @@ return [
     */
 
     'logo' => '<b>Clinic</b> Booker',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+    'logo_img' => 'assets/img/favicon.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -86,7 +86,7 @@ return [
     'auth_logo' => [
         'enabled' => false,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'assets/img/favicon.png',
             'alt' => 'Auth Logo',
             'class' => '',
             'width' => 50,
@@ -113,7 +113,7 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'assets/img/favicon.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
@@ -317,10 +317,18 @@ return [
             'text' => 'search',
         ],
 
+        // General menu
+        [
+            'text' => 'Dashboard',
+            'url'  => 'dashboard',
+            'icon' => 'fas fa-users',
+            'can'  => 'is-admin',
+        ],
+
         // Admin menu
         [
             'text' => 'Users',
-            'url'  => 'users/',
+            'url'  => 'dashboard/users',
             'icon' => 'fas fa-users',
             'can'  => 'is-admin',
         ],
@@ -331,12 +339,12 @@ return [
             'submenu' => [
                 [
                     'text' => 'All Appointments',
-                    'url' => 'appointments',
+                    'url' => 'dashboard/appointments',
                     'icon' => 'fas fa-angle-right',
                 ],
                 [
                     'text' => 'Add Appointment',
-                    'url'  => 'appointments/create',
+                    'url'  => 'dashboard/appointments/create',
                     'icon' => 'fas fa-angle-right',
                 ],
             ],
@@ -359,12 +367,12 @@ return [
             'submenu' => [
                 [
                     'text' => 'My Appointments',
-                    'url' => 'appointments',
+                    'url'  => 'dashboard/appointments',
                     'icon' => 'fas fa-angle-right',
                 ],
                 [
                     'text' => 'Add Appointment',
-                    'url'  => 'appointments/create',
+                    'url'  => 'dashboard/appointments/create',
                     'icon' => 'fas fa-angle-right',
                 ],
             ],
@@ -377,12 +385,12 @@ return [
             'submenu' => [
                 [
                     'text' => 'Medical Records',
-                    'url' => 'medical-records',
+                    'url'  => 'dashboard/medical-records',
                     'icon' => 'fas fa-angle-right',
                 ],
                 [
                     'text' => 'Add Medical Record',
-                    'url'  => 'medical-records/create',
+                    'url'  => 'dashboard/medical-records/create',
                     'icon' => 'fas fa-angle-right',
                     'can'  => 'is-doctor-or-admin',
                 ],
@@ -393,7 +401,7 @@ return [
         ['header' => 'Account Settings'],
         [
             'text' => 'My Profile',
-            'url'  => 'profile',
+            'url'  => 'dashboard/profile',
             'icon' => 'fas fa-user-cog',
         ],
     ],

@@ -71,7 +71,7 @@
                             <td>{{ $appointment->date }}</td>
                             <td>{{ $appointment->start_time }}</td>
                             <td>{{ $appointment->end_time }}</td>
-                            <td class="d-flex justify-center">
+                            <td>
                                 @php
                                     $colors = [
                                         'pending' => 'warning',
@@ -81,18 +81,26 @@
                                     ];
                                     $color = $colors[$appointment->status] ?? 'secondary';
                                 @endphp
-                                <select name="status" id="{{ $appointment->id }}"
-                                    class="form-control status @error('status') is-invalid @enderror"
-                                    required>
-                                    @foreach (['pending', 'confirmed', 'cancelled', 'completed'] as $status)
-                                        <option value="{{ $status }}"
-                                            {{ $appointment->status === $status ? 'selected' : '' }}>
-                                            {{ ucfirst($status) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <span class="spinner-border spinner-border-sm d-none ml-2 loading" role="status" aria-hidden="true"></span>
-                                
+                                @if(auth()->user()->type != 'patient')
+                                    <div class="d-flex align-items-center">
+                                        <select name="status" data-id="{{ $appointment->id }}"
+                                            class="form-control status text-white bg-{{ $color }}"
+                                            style="min-width: 150px;" required>
+                                            @foreach (['pending', 'confirmed', 'cancelled', 'completed'] as $status)
+                                                <option class="text-black bg-white" value="{{ $status }}"
+                                                    {{ $appointment->status === $status ? 'selected' : '' }}>
+                                                    {{ ucfirst($status) }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <span class="spinner-border spinner-border-sm d-none ml-2 loading" role="status"
+                                            aria-hidden="true"></span>
+                                    </div>
+                                @else
+                                    <span class="badge badge-{{ $color }}">
+                                        {{ ucfirst($appointment->status) }}
+                                    </span>
+                                @endif
                             </td>
                             <td>{{ $appointment->notes }}</td>
                             <td>
@@ -151,26 +159,50 @@
             }
         });
 
-        $('.status').change(function(e) {
-            e.preventDefault();
+        const statusColorMap = {
+            pending: 'warning',
+            confirmed: 'primary',
+            cancelled: 'danger',
+            completed: 'success',
+        };
 
-            $.ajax({
-                url: '{{ route('appointments.update', $appointment->id) }}',
-                type: 'PUT',
-                data: {'status': $(this).val()},
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                beforeSend: function() {
-                    $('.loading').removeClass('d-none');
-                },
-                success: function(response) {
-                    console.log('Status changed to ' + response.status + ' successfully');
-                    toastr.success('Status changed to ' + response.status + ' successfully');
-                },
-                complete: function() {
-                    $('.loading').addClass('d-none');
-                }
+        $(document).ready(function() {
+            $('.status').on('change', function(e) {
+                e.preventDefault();
+
+                const $select = $(this);
+                const appointmentId = $select.data('id');
+                const newStatus = $select.val();
+                const $spinner = $select.closest('td').find('.loading');
+
+                $.ajax({
+                    url: `/dashboard/appointments/${appointmentId}`,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'PUT',
+                        status: newStatus
+                    },
+                    beforeSend: function() {
+                        $spinner.removeClass('d-none');
+                    },
+                    success: function(response) {
+                        const successMsg = @json(__('Status updated successfully'));
+                        toastr.success(successMsg);
+
+                        const newColor = statusColorMap[newStatus] || 'secondary';
+                        $select
+                            .removeClass()
+                            .addClass(`form-control status text-white bg-${newColor}`);
+                    },
+                    error: function() {
+                        const failMsg = @json(__('Failed to update status'));
+                        toastr.error(failMsg);
+                    },
+                    complete: function() {
+                        $spinner.addClass('d-none');
+                    }
+                });
             });
         });
     </script>

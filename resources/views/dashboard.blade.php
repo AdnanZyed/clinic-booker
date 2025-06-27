@@ -1,17 +1,39 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
+@section('page_title', __('Dashboard'))
+
+@section('content_inner')
+
+    @if (auth()->user()->type === 'admin')
+        <div class="card bg-light mb-3">
+            <div class="card-header">{{__('Admin Dashboard')}}</div>
+            <div class="card-body">
+                <p>{{__('Hello!')}} {{ auth()->user()->name }}</p>
+                <a href="{{ route('users.index') }}" class="btn btn-secondary">{{ __('Manage Users') }}</a>
             </div>
         </div>
-    </div>
-</x-app-layout>
+    @endif
+
+    @if (auth()->user()->type === 'doctor')
+        <div class="card bg-light mb-3">
+            <div class="card-header">{{__('Doctor Dashboard')}}</div>
+            <div class="card-body">
+                <p>مرحباً د. {{ auth()->user()->name }}</p>
+                <a href="{{ route('appointments.index') }}" class="btn btn-info">{{__('Appointments')}}</a>
+                <a href="{{ route('medical-records.index') }}" class="btn btn-warning">سجلات المرضى</a>
+            </div>
+        </div>
+    @endif
+
+    @if (auth()->user()->type === 'patient')
+        <div class="card bg-light mb-3">
+            <div class="card-header">{{__('Patient Dashboard')}}</div>
+            <div class="card-body">
+                <p>مرحباً {{ auth()->user()->name }}</p>
+                <a href="{{ route('appointments.create') }}" class="btn btn-success">احجز موعد</a>
+                <a href="{{ route('medical-records.index') }}" class="btn btn-outline-primary">سجلي الطبي</a>
+            </div>
+        </div>
+    @endif
+
+@endsection
