@@ -60,6 +60,11 @@
                 <a href="index.html" class="logo d-flex align-items-center me-auto">
                     <img src="assets/img/logo.png" alt="">
                 </a>
+                @if (Auth::check())
+                  <a class="cta-btn" href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
+                @else
+                  <a class="cta-btn" href="{{ route('login') }}">{{ __('Login') }}</a>
+                @endif
                 <a class="cta-btn" href="{{ route('appointments.create') }}">Make an Appointment</a>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </div>
@@ -711,11 +716,11 @@
                         </div>
                     </div>
                     <div class="member-info">
-                        <h4>{{$doctor->user->name}}</h4>
+                        <h4>{{ __('Dr.') . ' ' . $doctor->user->name}}</h4>
                         <span>{{$doctor->user->specialization}}</span>
                     </div>
                     </div>
-                </div><
+                </div>
             @endforeach
         </div>
 

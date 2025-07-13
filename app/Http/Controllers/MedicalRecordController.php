@@ -72,7 +72,7 @@ class MedicalRecordController extends Controller
             'doctor_id' => 'required|exists:doctors,id',
             'date' => 'required|date',
             'diagnosis' => 'required|string',
-            'treatment' => 'nullable|string',
+            'treatment' => 'required|string',
             'prescription' => 'nullable|string',
         ]);
 
@@ -143,7 +143,7 @@ class MedicalRecordController extends Controller
             'patient_id' => 'required|exists:users,id',
             'doctor_id' => 'required|exists:doctors,id',
             'date' => 'required|date',
-            'diagnosis' => 'nullable|string',
+            'diagnosis' => 'required|string',
             'treatment' => 'nullable|string',
             'prescription' => 'nullable|string',
         ]);
