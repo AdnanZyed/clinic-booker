@@ -8,7 +8,16 @@ use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Auth::routes();
+use Illuminate\Support\Facades\DB;
+
+Route::get('/db-health', function () {
+    try {
+        DB::connection()->getPdo();
+        return '✅ Database connection OK';
+    } catch (\Throwable $e) {
+        return response('❌ Database connection error: '.$e->getMessage(), 500);
+    }
+});
 
 require __DIR__.'/auth.php';
 
